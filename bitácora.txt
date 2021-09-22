@@ -14,3 +14,13 @@ Diseño de Algoritmos: 12:50 AM - 1:00 AM
 Programación: 1:00 AM - 1:20 AM
 Pruebas: 1:20 AM - 1:45 AM
 Documentación interna: 1:45 AM - 1:55  AM
+
+21-Set, Gabriel Gomez
+Análisis Requerimientos: 8:10 PM - 8:45 PM
+Investigacion de nombres archivos: 8:45 PM - 9:20 PM
+    Fuentes:
+    -https://www.attachmate.com/es-es/documentation/reflection-desktop-v16/rdesktop-guide/data/t_6503.htm
+    -https://docs.microsoft.com/es-es/windows/win32/fileio/naming-a-file
+    -https://docs.axway.com/bundle/sync_win_errors/page/restricciones_de_nombres_de_archivos_y_directorios_en_windows.html
+    -https://python.readthedocs.io/en/stable/library/re.html
+Diseño de Algoritmos: 9:20 PM - 10:05 PM

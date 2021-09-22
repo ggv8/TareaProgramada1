@@ -28,16 +28,16 @@ def revisarTXT(pnombre):
 
 def revisarTXTAux():
     """ 
-    Función: Valida entrada de función revisarTXT
+    Función: Valida entrada de función revisarTXT según convención de Windows
     Entradas:
         nombre(str) - Nombre y extensión de archivo
     Salidas:
         Retorna contenidos de archivos válidos"""
-    nombre = input("Nombre completo de archivo de texto: ")
-    if re.match("[\w,\W]+?.txt", nombre): # Valida por lo menos un caracter y extensión txt
-        return revisarTXT(nombre)
+    nombre = input("Nombre del archivo de texto: ")
+    if re.match('^[^<>:"/|\?*\\\\]{1,256}$', nombre): # Busca que no esten caracteres del set
+        return revisarTXT(nombre + ".txt")            # Revisa si existe dicho archivo TXT
     else:
-        print("\nError: Extensión inválida, ingrese nombre de archivo .txt")
+        print("\nError: Nombre inválido de archivo")
     return ""
 
 
