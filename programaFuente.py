@@ -34,10 +34,11 @@ def revisarTXTAux():
     Salidas:
         Retorna contenidos de archivos válidos"""
     nombre = input("Nombre del archivo de texto: ")
-    if re.match('^[^<>:"/|\?*\\\\]{1,256}$', nombre): # Busca que no esten caracteres del set
-        return revisarTXT(nombre + ".txt")            # Revisa si existe dicho archivo TXT
+    # Valida que el archivo no tenga nombre o caractéres reservados en Windows
+    if re.match('^(?!CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9]$)[^<>:"/|\?*\\\\]{1,256}$', nombre):
+        return revisarTXT(nombre + ".txt")           # Revisa si existe dicho archivo TXT
     else:
-        print("\nError: Nombre inválido de archivo")
+        print("\nError: Nombre inválido de archivo") # Informa sobre nombre inválido
     return ""
 
 
