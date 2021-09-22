@@ -17,14 +17,17 @@ def revisarTXT(pnombre):
     """ 
     Función: Obtiene contenidos de un archivo válido
     Entradas: pnombre(str) - Nombre de archivo
-    Salidas: Retorna contenidos de archivos existentes y no vacios"""
+    Salidas: Retorna string de contenidos si los hay, sino retorna uno vacío"""
     try:
-        file = open(pnombre, "r")
-        if file.read() != "":      # Retorna contenidos si los tiene
-            return file.read()
+        file = open(pnombre + ".txt", "r")
+        contenidos = file.read()
+        file.close()
+        if contenidos != "":      # Retorna contenidos si los tiene
+            return contenidos
         print("\nError: El archivo se encuentra vacío.") # Archivo vacío
     except FileNotFoundError:
         print("\nError: El archivo indicado no existe.") # Archivo no encontrado
+    return ""
 
 def revisarTXTAux():
     """ 
@@ -32,18 +35,18 @@ def revisarTXTAux():
     Entradas:
         nombre(str) - Nombre y extensión de archivo
     Salidas:
-        Retorna contenidos de archivos válidos"""
+        Retorna contenidos de archivos válidos. De lo contrario, da string vacío"""
     nombre = input("Nombre del archivo de texto: ")
     # Valida que el archivo no tenga nombre o caractéres reservados en Windows
     if re.match('^(?!CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9]$)[^<>:"/|\?*\\\\]{1,256}$', nombre):
-        return revisarTXT(nombre + ".txt")           # Revisa si existe dicho archivo TXT
+        return revisarTXT(nombre)                    # Revisa si existe dicho archivo TXT
     else:
         print("\nError: Nombre inválido de archivo") # Informa sobre nombre inválido
-    return ""
+        return ""
 
 
 ##############################################################
 #####                Programa Principal                  #####
 ##############################################################
 
-revisarTXTAux()
+print(revisarTXTAux()) # Permite probar funciones

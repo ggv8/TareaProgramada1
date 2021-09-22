@@ -28,3 +28,6 @@ Diseño de Algoritmos: 9:20 PM - 10:05 PM
 21-Set, Gabriel Gomez
 Programación: 12:20 PM - 12:40 PM
 Pruebas: 1:45 PM - 2:00 PM
+Programación: 2:00 PM - 2:35 PM
+Pruebas: 2:35 PM - 2:45 PM
+Documentación interna: 2:45 PM - 2:50 PM
