@@ -5,16 +5,27 @@
 
 import re
 
-texto = "a! del a560, hola y del, mundo, pedro, copiar, cantando, nosotros y ante contra, el, los"
+# Str de prueba para tokenizar()
+texto = "a! Ante antes del a560, hola y y Del del, mundo, pedro, copiar, cantando, nosotros y ante contra, el, los" +\
+        " mediante un 15684, hacia yo y conmigo andando o versus nuestros ha comido terminado 1068"
+# Str de prueba para nuevo diseño de eliminar signos
+prueba = "A-veces tengo, texto! con puntuac:iones interc?aladas<"
 
-# Guardar expresiones regulares de tokens aca para mejorar claridad visual de funciones
+# Guardar expresiones regulares de tokens acá para mejorar claridad visual de funciones
 listaRE = ["^(el|la|los|las|un|una|unos|unas|lo|al|del)$",\
+           # ^ RE para Articulos
+           "^(a|ante|bajo|cabe|con|contra|de|desde|durante|en|entre|hacia|hasta|" + \
+           "mediante|para|por|según|sin|so|sobre|tras|versus|vía|cabe|so)$",\
+           # ^ RE para Preposiciones
+           "^(yo|me|mí|conmigo|nosotros|nosotras|nos|tú|te|ti|contigo|vosotros|" + \
+           "vosotras|vos|él|ella|se|consigo|le|les|mío|mía|míos|mías|nuestro|nuestra|" + \
+           "nuestros|nuestras|tuyo|tuya|tuyos|vuestro|vuestra|vuestros|vuestras|suyo|" + \
+           "suya|suyos|suyas)$",\
+           # ^ RE para Pronombres
+           "^\w*(ar|er|ir|ando|iendo|ado|ido|to|so|cho)$", "^\d+$"]
+           # ^ RE para verbos y luego RE para sólo dígitos
 
-           "^(a|ante|bajo|cabe|con|contra|de|desde|durante|en|" + \
-           "entre|hacia|hasta|mediante|para|por|según|sin|so|" + \
-           "sobre|tras|versus|vía|cabe|so)$"]
-
-# Por mejorar:
+# Por mejorar: RESUELTO!
     # 25/09 - Problema de elementos repetidos. Ej. "Ante" y "ante"
     # son diferentes para un computadora y eliminarRepetidos no
     # cubre esos casos. Tampoco se puede tomar todo en minúscula
@@ -22,34 +33,92 @@ listaRE = ["^(el|la|los|las|un|una|unos|unas|lo|al|del)$",\
     # Por el momento, solo solucionar repeticiones obvias y terminar
     # de hacer re.matches para otras clasificaciones de tokens
 
+# Se cambio diseño de eliminarRepetidos y eliminarSignos para no requerir
+# crear una nueva variable. También, al clasificar tokens, se toma una copia
+# sólo en minúscula para el re.match(). Incluir tokens luego se encarga de evitar
+# copias de tokens que den match. Los no clasificados simplemente añaden el token original
+
 Documento = [[],[],[],[],[],[]] # Maneja clasificacion de tokens
 
 def eliminarRepetidos(plista):
     """
-    Función:    Genera lista con elementos únicos a partir de entrada
+    Función:    Elimina repetidos de lista empezando por elementos finales
     Entradas:   plista (list) - Lista a analizar
-    Salidas:    Retorna lista generada
+    Salidas:    Retorna lista tras cambios
     """
-    result = []
-    for elemento in plista:
-        if elemento not in result: # Agrega cada elemento una vez
-            result.append(elemento)
-    return result
+    index = -1  # Var. de control para indices de derecha a izq.
+    for elemento in plista[::-1]: # Analiza lista desde el final
+        if plista.count(elemento) != 1: 
+            del plista[index]   # Si elemento esta repetido, lo elimina
+            index += 1  # Retrocede 1, compensa reposicionamiento al borrar repetidos
+        index -= 1 # Pasa al siguiente elemento
+    return plista
 
 def eliminarSignos(pstring):
-    """  """
-    nuevo = ""
-    for caracter in pstring:
-        if caracter not in ",.:;-¿?¡!<>":
-            nuevo += caracter
-    return nuevo
+    """
+    Función:    Elimina todo signo de puntuación de un string
+    Entradas:   pstring (str) - String de texto extraído
+    Salidas:    Retorna mismo string sin signos de puntuación
+    """
+    index = 0   # Var. de control para posición de elementos
+    for char in pstring:            # Busca signos de puntuación
+        if char in ",.:;-¿?¡!<>":   # Actualiza pstring, excluyendo caracter
+            pstring = pstring[:index] + pstring[index + 1:]
+            index -= 1   # Compensa reposicionamiento al excluir un caracter
+        index += 1     # Pasa a la siguiente posición
+    return pstring
+
+def incluirToken(plista, ptoken):
+    """
+    Función:    Incluye token clasificado si no está en sublista
+    Entradas:
+        plista (list) - Sublista para almacenar categoría de tokens
+        ptoken (str) - Token identificado dentro de una categoría
+    Salidas:    Retorna sublista tras cambios
+    """
+    if ptoken not in plista:
+        plista.append(ptoken)
+    return plista
+
+def clasificarToken(pdocumento, ptokens, plista):
+    """
+    Función:    Organiza tokens uno a uno por categoría
+    Entradas:
+        pdocumento (list) - Almacena tokens según categoría
+        ptokens (list) - Lista de tokens no categorizados
+        plista (list) - Lista con strings para validar en re.match
+    Salidas:    Retorna tokens clasificados por sublistas
+    """
+    while ptokens != []:    # Analiza hasta que no queden más tokens
+        token = ptokens[0].lower()  # Copia del token en minúscula
+        if re.match(plista[0], token):          # Artículos
+            incluirToken(pdocumento[0], token)
+        elif re.match(plista[1], token):        # Preposiciones
+            incluirToken(pdocumento[1], token)
+        elif re.match(plista[2], token):        # Pronombres
+            incluirToken(pdocumento[2], token)
+        elif re.match(plista[3], token):        # Verbos
+            incluirToken(pdocumento[3], token)
+        elif re.match(plista[4], token):        # Números
+            incluirToken(pdocumento[4], token)
+        else:                   # Sin clasificar, agrega token original evitando incluir
+            pdocumento[5].append( ptokens[0] ) # posibles nombres propios en minúscula
+        del ptokens[0]  # Borra token tras copiarlo en pdocumento
+    return pdocumento
 
 def tokenizar(pdocumento, pstring, plista):
-    """  """
-    pstring = eliminarSignos(pstring)
-    pstring = pstring.split(" ")
-    pstring = eliminarRepetidos(pstring)
-    clasificarToken(pdocumento, pstring, plista)
+    """
+    Función:    Convierte contenidos de un str en tokens organizados
+    Entradas:
+        pdocumento (list) - Lista con sublistas para categorizar tokens
+        pstring (str) - String del cuál se extraen tokens
+        plista (list) - Lista con strings para re.match()
+    Salidas:    Retorna lista con tokens clasificados en sublistas
+    """
+    pstring = eliminarSignos(pstring).split(" ") # Tokeniza str por " "
+    eliminarRepetidos(pstring)                   # Elimina repetidos
+    clasificarToken(pdocumento, pstring, plista) # y los clasifica
+    return pdocumento
 
 # Documento[0] - Articulos
     # el, la, los, las, un, una, unos, unas, lo, al, del
@@ -62,7 +131,7 @@ def tokenizar(pdocumento, pstring, plista):
     # yo, me, mí, conmigo, nosotros, nosotras, nos, tú, te, ti, contigo, vosotros, 
     # vosotras, vos, él, ella, se, consigo, le, les.
     # Mío, mía, míos, mías, nuestro, nuestra, nuestros, nuestras, tuyo, tuya, 
-    # tuyos, vuestro, vuestra, vuestros, vuestras, suyo, suya, suyos, suyas. 
+    # tuyos, vuestro, vuestra, vuestros, vuestras, suyo, suya, suyos, suyas.
 
 # Documento[3] - Verbos
     # Infinitivos = terminados en -ar, -er, -ir
@@ -75,26 +144,6 @@ def tokenizar(pdocumento, pstring, plista):
 # Documento[5] - Sin clasificar
     # Lo que sobre
 
-def clasificarToken(pdocumento, ptokens, plista):
-    """
-    Función:
-    Entradas:
-        pdocumento (list) - Donde se almacenan tokens según categoría
-        ptokens (list) - Lista no categorizada de tokens
-        plista (list) - Lista con strings para validar en re.match
-    Salidas:
-    """
-    while len(ptokens) != 0:
-        print("Quedan", len(ptokens), "tokens por analizar")
-        token = ptokens[0]
-        if re.match(plista[0], token):
-            print( re.match(plista[0], token) )
-            pdocumento[0].append( token )
-        elif re.match(plista[1], token):
-            print( re.match(plista[1], token) )
-            pdocumento[1].append( token )
-        del ptokens[0]
-    print(pdocumento)
-    print(ptokens)
 
-tokenizar(Documento, texto, listaRE)
+
+print(tokenizar(Documento, texto, listaRE))
