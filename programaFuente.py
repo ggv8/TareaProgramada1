@@ -131,6 +131,24 @@ def tokenizar(pdocumento, pstring, plista):
     return pdocumento
 
 # Ordenamiento de Listas
+def ordenarLista(plista):
+    """
+    Función:    Ordenamiento burbuja según alfabeto para lista de strings
+    Entradas:   plista (list) - Lista de strings para tokens
+    Salidas:    Retorna lista con elementos ordenados
+    """
+    while True:
+        index = 0     # Indice para accesar un elemento A
+        cambios = 0   # Contador/Var.Control para saber cambios realizados
+        for elementoB in plista[1:]:   # Compara elementos A y B de izq a derecha
+            if plista[index].lower() > elementoB.lower():          # Cambia valores si orden es
+                plista[index + 1] = plista[index]  # descendente e incrementa contador
+                plista[index] = elementoB
+                cambios += 1
+            index += 1                 # Pasa al siguiente elemento A
+        if cambios == 0:
+            return plista  # Si no hay cambios, lista ya fue ordenada
+
 
 ##############################################################
 #####                Programa Principal                  #####
@@ -160,3 +178,13 @@ Documento = [[],[],[],[],[],[]] # Maneja clasificacion de tokens
 
 
 print(tokenizar(Documento, revisarTXTAux(), listaRE))
+a0 = ["Luis", "Anabel", "Juan", "Ana"] # Lista de prueba 1
+# Lista esperada: ['Ana', 'Anabel', 'Juan', 'Luis']
+    # Resultado: ['Ana', 'Anabel', 'Juan', 'Luis']
+
+a1 = ["Luis", "Anabel", "Juan", "Ana", "almacén"] # Lista de prueba 2
+# Lista esperada: ['almacén','Ana', 'Anabel', 'Juan', 'Luis']
+    # Resultado: ['almacén','Ana', 'Anabel', 'Juan', 'Luis']
+    # To-do: Diseñar algoritmo que reemplaze el actual por uno tipo quick sort
+
+print(ordenarLista(a1))

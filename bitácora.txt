@@ -31,3 +31,11 @@ Pruebas: 1:45 PM - 2:00 PM
 Programación: 2:00 PM - 2:35 PM
 Pruebas: 2:35 PM - 2:45 PM
 Documentación interna: 2:45 PM - 2:50 PM
+
+
+22-Set, Gabriel Gomez
+Análisis Requerimientos: 3:00 PM - 3:20 PM
+Diseño Algoritmo: 3:20 PM - 3:40 PM
+Programación: 3:40 PM - 4:15 PM
+Pruebas: 4:15 PM - 4:50 PM
+Documentación Interna: 5:00 PM - 5:20 PM
