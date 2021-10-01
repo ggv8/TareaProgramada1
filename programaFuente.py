@@ -13,6 +13,34 @@ import re
 #####              Definición de Funciones               #####
 ##############################################################
 
+# Funciones complementarias
+
+def interfazMenu(ptexto, ptoken):
+    """
+    Función:    Muestra opciones disponibles a usuario en menú de tokenización
+    Entradas:
+        ptexto (str) - Texto ingresado o cargado de un archivo
+        ptoken (bool) - Indica si tokenización fue o no completada
+    Salidas:    Imprime título de menú y opciones
+    """
+    print("_"*50, "|" + "Sistema de Tokenización".center(48, ' ') + "|", "-"*50, sep="\n")
+    print("\n1. Ingresar un texto", "2. Cargar archivo de texto", sep="\n")
+    if ptexto != "":    # Si hay un texto cargado, imprime opcion tokenizar
+        print("3. Tokenizar texto")
+    if ptoken:          # Si se logro tokenizar texto, imprime opciones de salida
+        print("4. Generar HTML", "5. General XML", "6. Generar Binario", sep="\n")  
+    print('0. Salir del Sistema')
+
+def imprimirError(ptexto):
+    """
+    Función:    Muestra error a usuario antes de continuar el programa
+    Entradas:   ptexto (str) - Mensaje de error
+    Salidas:    Imprime título y mensaje de error
+    """
+    print("", "_"*50, "|" + "Error".center(48, ' ') + "|", "-"*50, sep="\n")
+    print("\n" + ptexto.center(50, " ") + "\n")
+    input("Continuar <ENTER>".center(50, " "))
+
 # Entrada de Datos
 
 def revisarTXT(pnombre):
@@ -24,11 +52,14 @@ def revisarTXT(pnombre):
         file = open(pnombre + ".txt", "r")
         contenidos = file.read()
         file.close()
-        if contenidos != "":      # Retorna contenidos si los tiene
-            return contenidos
-        print("\nError: El archivo se encuentra vacío.") # Archivo vacío
-    except FileNotFoundError:
-        print("\nError: El archivo indicado no existe.") # Archivo no encontrado
+        if contenidos == "":
+            imprimirError("El archivo de texto se encuentra vacío.")
+        else:
+            print("\nArchivo de texto cargado con éxito.\n")
+            input("Continuar <ENTER>".center(50, " "))
+        return contenidos
+    except FileNotFoundError: # Archivo no hallado o no existe
+        imprimirError("Archivo indicado no está o no existe.")
     return ""
 
 def revisarTXTAux():
@@ -38,13 +69,27 @@ def revisarTXTAux():
         nombre(str) - Nombre y extensión de archivo
     Salidas:
         Retorna contenidos de archivos válidos. De lo contrario, da string vacío"""
+    print("_"*50, "|" + "Manejo de Archivos".center(48, ' ') + "|", "-"*50, sep="\n")
     nombre = input("Nombre del archivo de texto: ")
     # Valida que el archivo no tenga nombre o caractéres reservados en Windows
     if re.match('^(?!CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9]$)[^<>:"/|\?*\\\\]{1,256}$', nombre):
         return revisarTXT(nombre)                    # Revisa si existe dicho archivo TXT
     else:
-        print("\nError: Nombre inválido de archivo") # Informa sobre nombre inválido
+        imprimirError("Nombre inválido de archivo.") # Informa sobre nombre inválido
         return ""
+
+def ingresarTXT():
+    """
+    Función:    Valida entradas directas de texto en sistema de tokenización
+    Entradas:   entrada (str) - Texto que usuario ingrese
+    Salidas:    Imprime error si usuario ingresa str nulo
+    """
+    print("_"*50, "|" + "Entrada de Texto".center(48, ' ') + "|", "-"*50, sep="\n")
+    entrada = input("Escriba texto a cargar: ")
+    if entrada == "":
+        print("Error: No debe ingresar un texto vacío.")
+    return entrada
+
 
 # Manejo de Listas
 
@@ -60,6 +105,8 @@ def eliminarRepetidos(plista):
             del plista[index]   # Si elemento esta repetido, lo elimina
             index += 1  # Retrocede 1, compensa reposicionamiento al borrar repetidos
         index -= 1 # Pasa al siguiente elemento
+    if "" in plista:
+        del plista[plista.index("")]
     return plista
 
 def eliminarSignos(pstring):
@@ -123,12 +170,15 @@ def tokenizar(pdocumento, pstring, plista):
         pdocumento (list) - Lista con sublistas para categorizar tokens
         pstring (str) - String del cuál se extraen tokens
         plista (list) - Lista con strings para re.match()
-    Salidas:    Retorna lista con tokens clasificados en sublistas
+    Salidas:    Retorna True si tokenizo texto, False si no
     """
     pstring = eliminarSignos(pstring).split(" ") # Tokeniza str por " "
+    if pstring == [""]:
+        return False
     eliminarRepetidos(pstring)                   # Elimina repetidos
+    ordenarLista(pstring)
     clasificarToken(pdocumento, pstring, plista) # y los clasifica
-    return pdocumento
+    return True
 
 # Ordenamiento de Listas
 def ordenarLista(plista):
@@ -149,6 +199,7 @@ def ordenarLista(plista):
         if cambios == 0:
             return plista  # Si no hay cambios, lista ya fue ordenada
 
+# Considerar que ordenamiento de listas no toma en cuenta tildes :(
 
 ##############################################################
 #####                Programa Principal                  #####
@@ -171,13 +222,42 @@ listaRE = ["^(el|la|los|las|un|una|unos|unas|lo|al|del)$",\
 # Por mejorar: RE para verbos participios hace match con textos incorrectos como "texto" o
 # "momento". "completo" si aplica (ej "el trabajo esta completo"). En general, queda pendiente
 # saber que combinaciones restringir. Otros ejemplos de errores serian "colocho", "tonto", "coso"
-# "hueso", "pincho"... Desconocemos si se podrian generar mas falsos positivos al prevenir caracteres
-# antes de hacer match con verbos
+# "hueso", "pincho", "lugar"... Desconocemos si se podrian generar mas falsos positivos al
+# prevenir caracteres antes de hacer match con verbos
 
 Documento = [[],[],[],[],[],[]] # Maneja clasificacion de tokens
+texto = ""                      # Texto de archivo o usuario para tokenizar
+tokenize = False                # Indicador para estado de tokenizacion
+while True:
+    print('\nDocumento:', Documento) # Borrar prints al final
+    print('Texto:', texto)
+    print('Tokenize?:', tokenize, '\n')
+    interfazMenu(texto, tokenize)   # Imprime interfaz disponible a usuario
+    opcion = input("\nDigite una opción: ")
+    if opcion == "0":
+        print("\n" + "-- Fin del Programa --".center(50, " ") + "\n")
+        break
+    elif opcion in ['1', '2']: # Si usuario ingresa un texto nuevo...
+        Documento =  [[],[],[],[],[],[]]    # Elimina tokens previos
+        tokenize= False                     # Reinicia indicador de tokenización
+        if opcion == "1":       # Ingresar texto directamente
+            texto = ingresarTXT()
+        else:                   # Cargar texto desde archivo txt
+            texto = revisarTXTAux()
+    elif opcion == "3" and texto != "":  # Permite tokenizar si hay un texto no nulo
+        tokenize = tokenizar(Documento, texto, listaRE)
+    elif tokenize and opcion in ['4','5','6']: # Si se tokenizo texto, permite opciones [4-6]
+        if opcion == "4":
+            print("Funcion crearHTML")
+        elif opcion == "5":
+            print("Funcion crearXML")
+        elif opcion == "6":
+            print("Funcion crearBinario")
+    else:                                   # Informa sobre opciones no disponibles
+        imprimirError("Digite una opción válida")
+        
 
 
-print(tokenizar(Documento, revisarTXTAux(), listaRE))
 a0 = ["Luis", "Anabel", "Juan", "Ana"] # Lista de prueba 1
 # Lista esperada: ['Ana', 'Anabel', 'Juan', 'Luis']
     # Resultado: ['Ana', 'Anabel', 'Juan', 'Luis']
@@ -186,5 +266,4 @@ a1 = ["Luis", "Anabel", "Juan", "Ana", "almacén"] # Lista de prueba 2
 # Lista esperada: ['almacén','Ana', 'Anabel', 'Juan', 'Luis']
     # Resultado: ['almacén','Ana', 'Anabel', 'Juan', 'Luis']
     # To-do: Diseñar algoritmo que reemplaze el actual por uno tipo quick sort
-
-print(ordenarLista(a1))
+   
