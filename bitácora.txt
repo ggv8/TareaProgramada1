@@ -7,3 +7,24 @@ Ej.
 Crear Repositorio: 11:30 PM - 12:30 AM "
 
 ------------------------------------------------
+
+01-Oct, Gabriel Gomez
+
+Investigacion HTML, referencias
+
+https://docs.python.org/3/library/html.html
+https://desarrolloweb.com/articulos/535.php
+https://www.mclibre.org/consultar/htmlcss/html/html-sintaxis.html
+https://www.manualweb.net/html/sintaxis-html/
+https://developer.mozilla.org/es/docs/Learn/Getting_started_with_the_web/HTML_basics
+https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables/Basics
+https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables/Advanced
+https://desarrolloweb.com/articulos/629.php
+
+
+Investigacion XML, referencias
+
+https://developer.mozilla.org/es/docs/Web/XML/XML_introduction
+https://www.w3bai.com/es/xml/xml_syntax.html
+https://www.tutorialspoint.com/es/xml/xml_syntax.htm
+
