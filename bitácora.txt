@@ -20,7 +20,8 @@ https://developer.mozilla.org/es/docs/Learn/Getting_started_with_the_web/HTML_ba
 https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables/Basics
 https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables/Advanced
 https://desarrolloweb.com/articulos/629.php
-
+https://programminghistorian.org/en/lessons/creating-and-viewing-html-files-with-python
+    # Revisar este ultimo para mejorar los html.write() y sus contenidos
 
 Investigacion XML, referencias
 
