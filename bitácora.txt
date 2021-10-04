@@ -39,3 +39,53 @@ Diseño Algoritmo: 3:20 PM - 3:40 PM
 Programación: 3:40 PM - 4:15 PM
 Pruebas: 4:15 PM - 4:50 PM
 Documentación Interna: 5:00 PM - 5:20 PM
+01-Oct, Gabriel Gomez
+
+Investigacion HTML, referencias
+
+https://docs.python.org/3/library/html.html
+https://desarrolloweb.com/articulos/535.php
+https://www.mclibre.org/consultar/htmlcss/html/html-sintaxis.html
+https://www.manualweb.net/html/sintaxis-html/
+https://developer.mozilla.org/es/docs/Learn/Getting_started_with_the_web/HTML_basics
+https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables/Basics
+https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables/Advanced
+https://desarrolloweb.com/articulos/629.php
+https://programminghistorian.org/en/lessons/creating-and-viewing-html-files-with-python
+    # Revisar este ultimo para mejorar los html.write() y sus contenidos
+
+Investigacion XML, referencias
+
+https://developer.mozilla.org/es/docs/Web/XML/XML_introduction
+https://www.w3bai.com/es/xml/xml_syntax.html
+https://www.tutorialspoint.com/es/xml/xml_syntax.htm
+
+Investigacion para obtener funcion que genere nombre de archivo con dd-mm-aaaa-hh-mm-ss:
+https://docs.python.org/3/library/datetime.html#module-datetime
+https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
+https://www.programiz.com/python-programming/datetime
+
+Investigacion para que generarArchivo() guarde en el directorio actual:
+    # No hace falta especificar path de archivo a generar. Al probarlo en VSCode, el archivo
+    # queda fuera de la carpeta de TareaProgramada porque el directorio desde el cual se corre
+    # el script es otro path. Si se corre el programa dandole doble click al py en la carpeta
+    # donde se encuentre, genera el archivo ahí mismo.
+
+Investigacion para que html muestre tildes y eñes:
+    # Al parecer, al enviar strings como argumento en el metodo x.write(), se codifica
+    # el archivo en formato ANSI. Esto se puede verificar usando notepad++ en la opción
+    # de encoding. Si se convierte a UTF-8, se muestra correctamente el html.
+    https://stackoverflow.com/questions/32253895/special-character-not-displaying-as-expected
+    # Se encontro este problema gracias a este usuario con una experiencia similar, que por
+    # recomendación probó con notepad++.
+
+    # Adicionalmente, surge otro problema. Según:
+    https://towardsdatascience.com/a-guide-to-unicode-utf-8-and-strings-in-python-757a232db95c
+    # El encoding de los strings en python 3 son UTF-8. El problema consiste entonces en saber
+    # por qué al pasar strings por x.write() la codificación del html pasa a ANSI. En otro foro
+    https://python-forum.io/thread-12509.html
+    # se hallo un usuario con un conflicto similar. Al pasar strings a un archivo de texto, la
+    # codificación pasaba a ANSI en lugar de UTF-8. La solución fue agregar un parametro a open
+    # que especifica la codificación (encoding="uft-8"). Esto llevo a revisar la documentación
+    # oficial de open() en python:
+    https://docs.python.org/3/library/functions.html#open
