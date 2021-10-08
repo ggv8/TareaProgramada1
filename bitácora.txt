@@ -1,9 +1,0 @@
-" Formato:
-Fecha - Estudiante
-Trabajo: Hora Inicio - Hora Final
-
-Ej.
-21-Set, Gabriel Gomez
-Crear Repositorio: 11:30 PM - 12:30 AM "
-
-------------------------------------------------
