@@ -23,7 +23,7 @@ def interfazMenu(ptexto, ptoken):
         ptoken (bool) - Indica si tokenización fue o no completada
     Salidas:    Imprime título de menú y opciones
     """
-    print("_"*50, "|" + "Sistema de Tokenización".center(48, ' ') + "|", "-"*50, sep="\n")
+    print('', "_"*50, "|" + "Sistema de Tokenización".center(48, ' ') + "|", "-"*50, sep="\n")
     print("\n1. Ingresar un texto", "2. Cargar archivo de texto", sep="\n")
     if ptexto != "":    # Si hay un texto cargado, imprime opcion tokenizar
         print("3. Tokenizar texto")
@@ -59,13 +59,13 @@ def revisarTXT(pnombre):
     Entradas: pnombre(str) - Nombre de archivo
     Salidas: Retorna string de contenidos si los hay, sino retorna uno vacío"""
     try:
-        file = open(pnombre + ".txt", "r")
+        file = open(pnombre + ".txt", "r", encoding="utf-8")
         contenidos = file.read()
         file.close()
         if contenidos == "":
             imprimirError("El archivo de texto se encuentra vacío.")
         else:
-            print("\nArchivo de texto cargado con éxito.\n")
+            print("", "Archivo de texto cargado con éxito.".center(50, " "), "", sep="\n")
             input("Continuar <ENTER>".center(50, " "))
         return contenidos
     except FileNotFoundError: # Archivo no hallado o no existe
@@ -97,7 +97,9 @@ def ingresarTXT():
     print("_"*50, "|" + "Entrada de Texto".center(48, ' ') + "|", "-"*50, sep="\n")
     entrada = input("Escriba texto a cargar: ")
     if entrada == "":
-        print("Error: No debe ingresar un texto vacío.")
+        imprimirError("No debe ingresar un texto vacío.")
+    print("", "Texto cargado con éxito.".center(50, " "), "", sep="\n")
+    input("Continuar <ENTER>".center(50, " "))
     return entrada
 
 
@@ -183,11 +185,14 @@ def tokenizar(pdocumento, pstring, plista):
     Salidas:    Retorna True si tokenizo texto, False si no
     """
     pstring = eliminarSignos(pstring).split(" ") # Tokeniza str por " "
-    if pstring == [""]:
-        return False
     eliminarRepetidos(pstring)                   # Elimina repetidos
+    if pstring == [""] or pstring == []:
+        imprimirError("Texto no pudo tokenizarse.")
+        return False
     ordenarLista(pstring)
     clasificarToken(pdocumento, pstring, plista) # y los clasifica
+    print("", "Texto tokenizado con éxito.".center(50, " "), "", sep="\n")
+    input("Continuar <ENTER>".center(50, " "))
     return True
 
 # Ordenamiento de Listas
@@ -275,7 +280,6 @@ def crearFilas(pdocumento, parchivo):
     Salidas:    Tags dentro del archivo html
     """
     cantidad = max( contarTokens(pdocumento)[1:] )
-    print("Mayor cantidad", cantidad)
     for num in range(cantidad):     # Genera filas según mayor de cantidad de tokens
         parchivo.write('            <tr  align="center">\n') # Fila y contenido centrado
         for lista in pdocumento:    # Genera celdas en fila
@@ -292,6 +296,7 @@ def contarTokens(pdocumento):
     Entradas:   pdocumento (list) - Tokens clasificados en sublistas
     Salidas:    Retorna lista numérica con contadores
     """
+    [0,1]
     contador = [0]  # Inicia con contador total
     for lista in pdocumento:
         cantidad = len(lista)       # Obtiene cantidad en sublista
@@ -317,6 +322,7 @@ def crearReporte(pdocumento, parchivo, pstrings):
         parchivo.write(f'            <li>{lista[num]} {pstrings[num-1]}</li>\n')
     parchivo.write('        </ul>\n')   # Cierra tag de lista
     return ''
+
 
 # Creacion de XML
 
@@ -353,6 +359,7 @@ def crearXML(pnombre, pdocumento):
     xml.write('</Documento>\n') # Cierra root de XML
     xml.close()
     return f'{pnombre}.xml ha sido creado con éxito.'
+
 
 # Creacion de BD
 
@@ -439,9 +446,9 @@ Documento = [[],[],[],[],[],[]] # Maneja clasificacion de tokens
 texto = ""                      # Texto de archivo o usuario para tokenizar
 tokenize = False                # Indicador para estado de tokenizacion
 while True:
-    print('\nDocumento:', Documento) # Borrar prints al final
-    print('Texto:', texto)
-    print('Tokenize?:', tokenize, '\n')
+    #print('\nDocumento:\n', Documento, sep="") # Borrar prints al final
+    #print('\nTexto:\n', texto, sep="")
+    #print('\nTokenizar:\n', tokenize, '\n')
     interfazMenu(texto, tokenize)   # Imprime interfaz disponible a usuario
     opcion = input("\nDigite una opción: ")
     if opcion == "0":
@@ -459,16 +466,14 @@ while True:
     elif tokenize and opcion in ['4','5','6']: # Si se tokenizo texto, permite opciones [4-6]
         if opcion == "4":
             print('\n' + crearHTML( crearNombre(), Documento, texto) + '\n')
+            input("<ENTER> Continuar".center(50, " "))
         elif opcion == "5":
             print('\n' + crearXML( crearNombre(), Documento) + '\n')
+            input("<ENTER> Continuar".center(50, " "))
         elif opcion == "6":
             crearBinario(Documento)
     else:                                   # Informa sobre opciones no disponibles
         imprimirError("Digite una opción válida")
 
 
-# Por mejorar: RE para verbos participios hace match con textos incorrectos como "texto" o
-# "momento". "completo" si aplica (ej "el trabajo esta completo"). En general, queda pendiente
-# saber que combinaciones restringir. Otros ejemplos de errores serian "colocho", "tonto", "coso"
-# "hueso", "pincho", "lugar"... Desconocemos si se podrian generar mas falsos positivos al
-# prevenir caracteres antes de hacer match con verbos
+# Queda pendiente considerar tildes en organizarListas y palabras que se cuelan en verbos
